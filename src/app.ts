@@ -24,12 +24,12 @@ mongoose.connect(process.env.DATABASE_URL as string, (error) => {
 
 app.use("/api", indexRouter);
 
-app.use((err: newError, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   const errorStatus = err.status || 500;
   const errorName = err.name || " ";
   const errorStack = err.stack || " ";
   const errorMessage = err.message || "Something went wrong!";
-  return res.json({
+  return res.status(errorStatus).json({
     errorStatus,
     errorName,
     errorMessage,

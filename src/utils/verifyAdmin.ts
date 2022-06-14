@@ -1,15 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import { IGetUserAuthInfoRequest, newError } from "../../types";
+import { newError } from "../../types";
+
+
 
 const verifyAdmin = (
-  req: IGetUserAuthInfoRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   if (!req.user.isAdmin) {
-    const error = new Error("User is not admin!") as newError;
+    const error = new Error("User is not admin!");
     error.name = "Authentication Error";
     error.status = 401;
     next(error);
   }
 };
+
+export default verifyAdmin
