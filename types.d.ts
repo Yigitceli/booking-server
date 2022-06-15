@@ -16,3 +16,11 @@ declare global {
     stack?: string;
   }
 }
+
+interface IUser {
+  userid: string;
+  email: string;
+  name: string;
+  isAdmin: boolean;
+  photoUrl: string;
+}

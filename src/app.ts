@@ -5,6 +5,7 @@ import cors from "cors";
 import indexRouter from "./routes";
 import mongoose from "mongoose";
 import { newError } from "../types";
+import "../firebase/firebaseinit.ts";
 
 dotenv.config();
 const app: Application = express();
