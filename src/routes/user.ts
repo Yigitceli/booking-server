@@ -8,6 +8,6 @@ const userRouter = Router();
 
 userRouter.post("/login", LOGIN);
 userRouter.get("/", verifyToken ,verifyAdmin, GETALLUSERS)
-userRouter.delete("/", verifyAdmin, DELETEUSER)
+userRouter.delete("/", verifyToken, verifyAdmin, DELETEUSER)
 
 export default userRouter;

@@ -13,7 +13,8 @@ const verifyAdmin = (
     error.name = "Authentication Error";
     error.status = 401;
     next(error);
-  }
+  } 
+  next()
 };
 
 export default verifyAdmin
