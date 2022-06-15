@@ -10,7 +10,7 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     if (token) {
       try {
         const userData = await auth.verifyIdToken(token);
-                
+                        
         
         return next();
       } catch (error) {
@@ -19,8 +19,7 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
           undefined,
           "Invalid access token",
           401
-        );
-        console.log("test");
+        );        
         return next(err);
       }
     }
