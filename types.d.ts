@@ -15,6 +15,7 @@ declare global {
     status?: number;
     stack?: string;
   }
+
 }
 
 interface IUser {
@@ -23,4 +24,8 @@ interface IUser {
   name: string;
   isAdmin: boolean;
   photoUrl: string;
+}
+
+interface ITokenData{
+  user:IUser
 }

@@ -1,12 +1,7 @@
 import mongoose from "mongoose";
+import { IUser } from "../../types";
 
-const userSchema = new mongoose.Schema<{
-  userid: string;
-  email: string;
-  photoUrl: string;
-  name: string;
-  isAdmin: boolean;
-}>({
+const userSchema = new mongoose.Schema<IUser>({
   userid: { unique: true, type: "string", required: true },
   email: { unique: true, type: "string", required: true },
   photoUrl: { unique: true, type: "string", required: true },

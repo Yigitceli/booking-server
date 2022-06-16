@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { newError } from "../../types";
+import { IUser, newError } from "../../types";
 import User from "../models/User";
 import createError from "../utils/createError";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const LOGIN = async (
   req: Request,
@@ -9,13 +13,23 @@ export const LOGIN = async (
   next: NextFunction
 ) => {
   try {
-    const user = await User.findOne({ userid: req.body.userid });    
+    const user: IUser | null = await User.findOne({ userid: req.body.userid });
     if (user) {
-      return res.status(200).json(user);
+      const accessToken = jwt.sign(
+        { user },
+        process.env.ACCESS_TOKEN as string,
+        { expiresIn: "3d" }
+      );      
+      return res.status(200).json({ payload: { user, accessToken } });
     }
     const newUser = new User(req.body);
     await newUser.save();
-    return res.status(200).json(newUser);
+    const accessToken = jwt.sign(
+      { user: newUser },
+      process.env.ACCESS_TOKEN as string,
+      { expiresIn: "3d" }
+    );
+    return res.status(200).json({ payload: { user: newUser, accessToken } });
   } catch (error) {
     next(error);
   }
