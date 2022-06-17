@@ -110,7 +110,8 @@ export const REFRESHTOKEN = async (
     console.log(refreshToken);
     const accessToken = jwt.sign(
       { user: userData.user },
-      process.env.ACCESS_TOKEN as string
+      process.env.ACCESS_TOKEN as string,
+      {expiresIn:"15m"}
     );
     return res.status(200).json({ payload: { accessToken } });
   } catch (error) {
