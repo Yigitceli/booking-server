@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { IUser, newError } from "../../types";
+import { ITokenData, IUser, newError } from "../../types";
 import User from "../models/User";
 import createError from "../utils/createError";
 import jwt from "jsonwebtoken";
@@ -18,18 +18,32 @@ export const LOGIN = async (
       const accessToken = jwt.sign(
         { user },
         process.env.ACCESS_TOKEN as string,
-        { expiresIn: "3d" }
-      );      
-      return res.status(200).json({ payload: { user, accessToken } });
+        { expiresIn: "15m" }
+      );
+      const refreshToken = jwt.sign(
+        { user: user },
+        process.env.REFRESH_TOKEN as string,
+        { expiresIn: "90d" }
+      );
+      return res
+        .status(200)
+        .json({ payload: { user, accessToken, refreshToken } });
     }
     const newUser = new User(req.body);
     await newUser.save();
     const accessToken = jwt.sign(
       { user: newUser },
       process.env.ACCESS_TOKEN as string,
-      { expiresIn: "3d" }
+      { expiresIn: "15m" }
     );
-    return res.status(200).json({ payload: { user: newUser, accessToken } });
+    const refreshToken = jwt.sign(
+      { user: newUser },
+      process.env.REFRESH_TOKEN as string,
+      { expiresIn: "90d" }
+    );
+    return res
+      .status(200)
+      .json({ payload: { user: newUser, accessToken, refreshToken } });
   } catch (error) {
     next(error);
   }
@@ -62,9 +76,43 @@ export const DELETEUSER = async (
   res: Response,
   next: NextFunction
 ) => {
+  const { id } = req.params;
   try {
-    const user = await User.findOneAndDelete({ userid: req.user.userid });
-    return res.status(200).json();
+    const user = await User.findOneAndDelete({ userid: id });
+    return res.status(200).json({ msg: "User deleted!" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const REFRESHTOKEN = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const refreshToken = req.headers["refresh-token"] as string;
+
+  try {
+    if (!refreshToken)
+      return next(
+        createError(
+          "Authorization Error",
+          undefined,
+          "Missing refresh token!",
+          401
+        )
+      );
+    
+    const userData = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN as string
+    ) as ITokenData;
+    console.log(refreshToken);
+    const accessToken = jwt.sign(
+      { user: userData.user },
+      process.env.ACCESS_TOKEN as string
+    );
+    return res.status(200).json({ payload: { accessToken } });
   } catch (error) {
     next(error);
   }

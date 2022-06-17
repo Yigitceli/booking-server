@@ -7,6 +7,7 @@ declare global {
       FIREBASE_PRIVATE_KEY: string;
       FIREBASE_CLIENT_EMAIL: string;
       ACCESS_TOKEN:string
+      REFRESH_TOKEN:string
     }
   }
 }
